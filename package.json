@@ -1,9 +1,9 @@
 
 {
-  "name": "plumeoapp",
+  "name": "labostyle-app",
   "version": "1.0.0",
   "private": true,
-  "description": "Application Pluméo pour l'amélioration de la rédaction au collège",
+  "description": "Application LaboStyle pour l'amélioration de la rédaction au collège",
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

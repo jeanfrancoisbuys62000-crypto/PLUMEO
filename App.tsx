@@ -154,7 +154,7 @@ const App: React.FC = () => {
       }, 100);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || "Oups, Plumeo a rencontré un petit problème. Réessaie !");
+      setErrorMsg(err.message || "Oups, LaboStyle a rencontré un petit problème. Réessaie !");
       setState(prev => ({ ...prev, isAnalyzing: false }));
     }
   };
@@ -209,13 +209,13 @@ const App: React.FC = () => {
       label = "Perfectionnement en cours !";
     } else if (state.analysis) {
       percent = 85;
-      label = "Analyse Plumeo terminée !";
+      label = "Analyse LaboStyle terminée !";
     } else if (state.isAnalyzing) {
       percent = 65;
       label = "Ta plume est à l'étude...";
     } else if (wordCount > 0) {
       percent = Math.min(Math.floor((wordCount / 150) * 50), 50);
-      label = wordCount < 150 ? "L'inspiration arrive..." : "Prêt pour le bilan Plumeo !";
+      label = wordCount < 150 ? "L'inspiration arrive..." : "Prêt pour le bilan LaboStyle !";
     }
 
     return { percent, label };
@@ -285,7 +285,7 @@ const App: React.FC = () => {
                       <Feather className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h2 className="font-bold text-white text-xl font-display uppercase tracking-tight">Ma Plume</h2>
+                      <h2 className="font-bold text-white text-xl font-display uppercase tracking-tight">Mon Labo</h2>
                       <p className="text-white/40 text-[10px] uppercase font-black tracking-widest">Atelier de rédaction</p>
                     </div>
                   </div>
@@ -305,7 +305,7 @@ const App: React.FC = () => {
                   <textarea 
                     value={state.text}
                     onChange={(e) => setState(prev => ({ ...prev, text: e.target.value }))}
-                    placeholder="Laisse couler ton inspiration sur cette page Plumeo..."
+                    placeholder="Laisse couler ton inspiration sur cette page LaboStyle..."
                     className={`w-full min-h-[600px] p-10 md:pl-20 text-xl leading-relaxed outline-none resize-none font-serif placeholder:italic transition-colors bg-transparent relative z-10 ${
                       state.isDarkMode ? 'text-slate-200 placeholder:text-slate-600' : 'text-slate-800 placeholder:text-slate-300'
                     }`}
@@ -315,7 +315,7 @@ const App: React.FC = () => {
                       <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 ${state.isDarkMode ? 'bg-slate-800' : 'bg-slate-50'}`}>
                         <FileText className={`w-12 h-12 ${state.isDarkMode ? 'text-slate-600' : 'text-slate-200'}`} />
                       </div>
-                      <p className={`${state.isDarkMode ? 'text-slate-500' : 'text-indigo-200'} font-bold text-lg text-center`}>Ta plume n'attend que toi.</p>
+                      <p className={`${state.isDarkMode ? 'text-slate-500' : 'text-indigo-200'} font-bold text-lg text-center`}>Ton Labo n'attend que toi.</p>
                     </div>
                   )}
                 </div>
@@ -345,7 +345,7 @@ const App: React.FC = () => {
                       wordCount > 100 ? 'bg-indigo-500/20 text-indigo-500' : 
                       'bg-slate-500/20 text-slate-500'
                     }`}>
-                      {wordCount > 300 ? 'Maître Plumeo' : wordCount > 100 ? 'Écrivain' : 'Apprenti'}
+                      {wordCount > 300 ? 'Maître LaboStyle' : wordCount > 100 ? 'Expert' : 'Apprenti'}
                     </span>
                   </div>
                 </div>
@@ -397,7 +397,7 @@ const App: React.FC = () => {
                     {state.isAnalyzing ? (
                       <>
                         <div className="w-6 h-6 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
-                        Analyse Plumeo...
+                        Analyse LaboStyle...
                       </>
                     ) : (
                       <>
@@ -455,7 +455,7 @@ const App: React.FC = () => {
                   : 'bg-white border-slate-200 shadow-indigo-50/30'
               }`}>
                 <h3 className={`font-bold mb-6 flex items-center gap-2 font-display ${state.isDarkMode ? 'text-slate-200' : 'text-indigo-950'}`}>
-                  <Lightbulb className="w-5 h-5 text-amber-500" /> Guide Plumeo
+                  <Lightbulb className="w-5 h-5 text-amber-500" /> Guide LaboStyle
                 </h3>
                 <div className="space-y-6">
                   <MethodItem number="1" title="Sujet" desc="Prépare ton voyage littéraire." isDarkMode={state.isDarkMode} />

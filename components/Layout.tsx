@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Moon, Sun, Feather, Sparkles } from 'lucide-react';
+import { Moon, Sun, Feather, Sparkles, Beaker } from 'lucide-react';
 import { AppView } from '../types';
 
 interface LayoutProps {
@@ -23,8 +23,11 @@ export const Layout: React.FC<LayoutProps> = ({ children, isDarkMode, onToggleDa
       }`}>
         <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => onViewChange('editor')}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:rotate-3 ${isDarkMode ? 'bg-indigo-500/20' : 'bg-white/10'}`}>
+              <Beaker className={`w-6 h-6 ${isDarkMode ? 'text-indigo-400' : 'text-indigo-300'}`} />
+            </div>
             <h1 className={`text-2xl font-black tracking-tighter font-display transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-indigo-300'}`}>
-              Plumeo
+              LaboStyle
             </h1>
           </div>
           
@@ -77,14 +80,14 @@ export const Layout: React.FC<LayoutProps> = ({ children, isDarkMode, onToggleDa
       
       <footer className={`py-12 border-t relative z-10 transition-colors ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-indigo-50/30 border-slate-200'}`}>
         <div className="max-w-6xl mx-auto px-4 flex flex-col items-center gap-4">
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-2 ${isDarkMode ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-100 text-indigo-600'}`}>
-            <Feather className="w-4 h-4" />
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 shadow-lg transition-transform hover:rotate-6 ${isDarkMode ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-900/50' : 'bg-indigo-600 text-white'}`}>
+            <Beaker className="w-5 h-5" />
           </div>
           <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            Plumeo — Redonner ses lettres de noblesse à l'écriture.
+            LaboStyle — Redonner ses lettres de noblesse à l'écriture.
           </p>
           <p className={`text-[10px] uppercase tracking-widest font-black ${isDarkMode ? 'text-slate-600' : 'text-slate-300'}`}>
-            © 2024 • Atelier Littéraire Intelligent
+            © 2024 • Laboratoire Littéraire Intelligent
           </p>
         </div>
       </footer>

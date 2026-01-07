@@ -147,7 +147,7 @@ export const InspirationView: React.FC<{ isDarkMode: boolean, onBack: () => void
     setLoading(true);
     try {
       const data = await getInspirationContent(selectedTheme.title);
-      setContent({ ...data, author: "L'IA Pluméo", source: "Génération Unique" });
+      setContent({ ...data, author: "L'IA LaboStyle", source: "Génération Unique" });
     } catch (err) {
       console.error(err);
     } finally {
@@ -157,7 +157,7 @@ export const InspirationView: React.FC<{ isDarkMode: boolean, onBack: () => void
 
   const handleThemeClick = (theme: ThemeCard) => {
     setSelectedTheme(theme);
-    setContent({ text: theme.classicExample, tips: theme.classicTips, author: "Pluméo", source: "Exemple Pédagogique" });
+    setContent({ text: theme.classicExample, tips: theme.classicTips, author: "LaboStyle", source: "Exemple Pédagogique" });
   };
 
   const loadExcerpt = (excerpt: LiteraryExcerpt) => {
@@ -253,7 +253,7 @@ export const InspirationView: React.FC<{ isDarkMode: boolean, onBack: () => void
                 {loading ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center">
                     <Loader2 className="w-12 h-12 animate-spin text-indigo-500 mb-4" />
-                    <p className={`italic ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Pluméo invoque les muses pour toi...</p>
+                    <p className={`italic ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>LaboStyle invoque les muses pour toi...</p>
                   </div>
                 ) : content && (
                   <div className="flex-1">

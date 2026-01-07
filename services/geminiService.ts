@@ -6,10 +6,10 @@ import { Consigne, GradeLevel, AnalysisResult } from "../types";
 const handleApiError = (err: any) => {
   console.error("API Error:", err);
   if (err.message?.includes("429") || err.status === 429) {
-    throw new Error("Pluméo est très sollicité en ce moment (limite de requêtes atteinte). Patiente 10 petites secondes et réessaie !");
+    throw new Error("LaboStyle est très sollicité en ce moment (limite de requêtes atteinte). Patiente 10 petites secondes et réessaie !");
   }
   if (err.message?.includes("500") || err.status === 500) {
-    throw new Error("Le cerveau de Pluméo fatigue un peu (erreur serveur). Réessaie dans un instant.");
+    throw new Error("Le cerveau de LaboStyle fatigue un peu (erreur serveur). Réessaie dans un instant.");
   }
   throw err;
 };
@@ -80,7 +80,7 @@ export const getLexicalInfo = async (word: string, type: 'definition' | 'synonym
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
-          systemInstruction: "Tu es un dictionnaire pédagogique pour collégiens. Tes réponses sont concises, claires et utilisent un ton encourageant."
+          systemInstruction: "Tu es un dictionnaire pédagogique pour collégiens. Tes réponses sont concises, claires et utilisent un ton encourageant. Tu t'appelles LaboStyle."
       }
     });
     return response.text || "Désolé, je n'ai pas trouvé d'informations pour ce mot.";
@@ -114,7 +114,7 @@ export const analyzeRedaction = async (text: string, consigne: Consigne | null):
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const systemInstruction = `
-      Tu es un coach pédagogique bienveillant pour collégiens français (6ème à 3ème).
+      Tu es un coach pédagogique bienveillant pour collégiens français (6ème à 3ème). Tu t'appelles LaboStyle.
       Ton rôle est d'analyser une rédaction et de fournir des retours constructifs SANS donner la correction directe.
       
       Critères d'analyse:

@@ -63,7 +63,7 @@ export const ConsignePanel: React.FC<ConsignePanelProps> = ({ onConsigneChange, 
           <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
             <BookOpen className="w-5 h-5 text-white" />
           </div>
-          <h2 className="font-bold font-display">Mon Sujet Plumeo</h2>
+          <h2 className="font-bold font-display">Mon Sujet LaboStyle</h2>
         </div>
         <button 
           onClick={() => setShowGenerator(!showGenerator)}
