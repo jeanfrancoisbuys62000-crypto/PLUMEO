@@ -10,7 +10,7 @@ import { ScannerModal } from './components/ScannerModal';
 import { InspirationView } from './components/InspirationView';
 import { AppState, Consigne, AppView } from './types';
 import { analyzeRedaction } from './services/geminiService';
-import { FileText, Trash2, Edit3, Camera, FileUp, Sparkles, Wand2, Lightbulb, CheckCircle2, Feather } from 'lucide-react';
+import { FileText, Trash2, Edit3, Camera, FileUp, Sparkles, Wand2, Lightbulb, CheckCircle2, Feather, AlertTriangle } from 'lucide-react';
 
 type TipCategory = 'vocabulary' | 'grammar' | 'organization' | 'style' | 'general';
 
@@ -22,7 +22,7 @@ interface Tip {
 const TIPS: Tip[] = [
   { text: "Remplace le verbe 'faire' par des verbes plus précis : construire, préparer, cuisiner, rédiger...", category: 'vocabulary' },
   { text: "Évite les répétitions ! Utilise des synonymes ou des pronoms pour désigner tes personnages.", category: 'style' },
-  { text: "Utilise des connecteurs logiques comme 'pourtant', 'néanmoins' ou 'ainsi' pour lier tes idées.", category: 'organization' },
+  { text: "Utilise des connecteurs logiques comme 'pourtant', 'néanmoins' ou 'ainsi' pour l'agent tes idées.", category: 'organization' },
   { text: "Varie la longueur de tes phrases. Des phrases courtes pour l'action, de plus longues pour la description.", category: 'style' },
   { text: "N'oublie pas l'accord du participe passé avec l'auxiliaire 'être' : il s'accorde avec le sujet.", category: 'grammar' },
   { text: "Avec l'auxiliaire 'avoir', le participe passé ne s'accorde jamais avec le sujet, mais avec le COD s'il est placé avant.", category: 'grammar' },
@@ -76,6 +76,7 @@ const App: React.FC = () => {
   const [currentTipIndex, setCurrentTipIndex] = useState(() => Math.floor(Math.random() * TIPS.length));
   const [tipHistory, setTipHistory] = useState<number[]>([]);
   const [showScanner, setShowScanner] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -142,6 +143,7 @@ const App: React.FC = () => {
 
   const handleAnalyze = async () => {
     if (!state.text.trim()) return;
+    setErrorMsg(null);
     setState(prev => ({ ...prev, isAnalyzing: true, analysis: null }));
     try {
       const result = await analyzeRedaction(state.text, state.consigne);
@@ -150,8 +152,9 @@ const App: React.FC = () => {
         const analysisEl = document.getElementById('analysis-results');
         if (analysisEl) analysisEl.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setErrorMsg(err.message || "Oups, Pluméo a rencontré un petit problème. Réessaie !");
       setState(prev => ({ ...prev, isAnalyzing: false }));
     }
   };
@@ -159,6 +162,7 @@ const App: React.FC = () => {
   const clearText = () => {
     if (confirm("Effacer tout le texte ?")) {
       setState(prev => ({ ...prev, text: '', analysis: null, correctionMode: false }));
+      setErrorMsg(null);
     }
   };
 
@@ -312,6 +316,16 @@ const App: React.FC = () => {
                     </div>
                   )}
                 </div>
+
+                {errorMsg && (
+                  <div className={`mx-8 mb-4 p-4 rounded-xl border flex items-center gap-3 animate-in slide-in-from-bottom-2 ${
+                    state.isDarkMode ? 'bg-red-900/20 border-red-900/50 text-red-300' : 'bg-red-50 border-red-100 text-red-800'
+                  }`}>
+                    <AlertTriangle className="w-5 h-5 shrink-0" />
+                    <p className="text-sm font-bold">{errorMsg}</p>
+                    <button onClick={() => setErrorMsg(null)} className="ml-auto text-[10px] uppercase font-black hover:underline">Fermer</button>
+                  </div>
+                )}
 
                 <div className={`p-8 border-t flex flex-col md:flex-row items-center justify-between gap-8 transition-colors ${
                   state.isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'

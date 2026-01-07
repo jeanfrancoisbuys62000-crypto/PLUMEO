@@ -1,6 +1,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Camera, X, RefreshCw, Check, Loader2 } from 'lucide-react';
+import { Camera, X, RefreshCw, Check, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { extractTextFromImage } from '../services/geminiService';
 
 interface ScannerModalProps {
@@ -15,6 +15,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     startCamera();
@@ -24,6 +25,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
   }, []);
 
   const startCamera = async () => {
+    setError(null);
     try {
       const s = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: 'environment' } 
@@ -32,9 +34,13 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
       if (videoRef.current) {
         videoRef.current.srcObject = s;
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erreur caméra:", err);
-      alert("Impossible d'accéder à la caméra. Vérifie tes permissions.");
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError' || err.message?.includes('Permission dismissed')) {
+        setError("L'accès à la caméra a été refusé. Pour scanner ta rédaction, Pluméo a besoin de cette autorisation dans les réglages de ton navigateur.");
+      } else {
+        setError("Impossible d'activer la caméra. Vérifie qu'elle n'est pas déjà utilisée par une autre application.");
+      }
     }
   };
 
@@ -76,6 +82,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
 
   const resetCapture = () => {
     setCapturedImage(null);
+    setError(null);
   };
 
   return (
@@ -89,7 +96,23 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
         </button>
 
         <div className="flex-1 relative bg-black flex items-center justify-center overflow-hidden">
-          {!capturedImage ? (
+          {error ? (
+            <div className="p-8 text-center flex flex-col items-center animate-in fade-in zoom-in-95 duration-300">
+              <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mb-6">
+                <ShieldAlert className="w-10 h-10 text-red-500" />
+              </div>
+              <h3 className="text-xl font-bold text-white font-display mb-4">Problème d'autorisation</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-8 max-w-sm">
+                {error}
+              </p>
+              <button 
+                onClick={startCamera}
+                className="flex items-center gap-2 px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-900/40"
+              >
+                <RefreshCw className="w-5 h-5" /> Réessayer l'accès
+              </button>
+            </div>
+          ) : !capturedImage ? (
             <video 
               ref={videoRef} 
               autoPlay 
@@ -111,7 +134,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
             </div>
           )}
 
-          {!capturedImage && !isProcessing && (
+          {!capturedImage && !isProcessing && !error && (
             <div className="absolute inset-0 border-2 border-white/20 pointer-events-none flex items-center justify-center">
               <div className="w-64 h-80 border-2 border-dashed border-white/40 rounded-lg"></div>
             </div>
@@ -119,14 +142,14 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
         </div>
 
         <div className="p-8 bg-slate-950 flex items-center justify-center gap-6">
-          {!capturedImage ? (
+          {!error && !capturedImage ? (
             <button 
               onClick={captureFrame}
               className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"
             >
               <div className="w-12 h-12 border-4 border-slate-950 rounded-full"></div>
             </button>
-          ) : (
+          ) : capturedImage && (
             <div className="flex gap-4 w-full justify-center">
               <button 
                 onClick={resetCapture}
@@ -147,7 +170,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
         </div>
       </div>
       
-      <p className="mt-4 text-slate-400 text-sm font-medium">Cadre ta rédaction dans le viseur pour un scan optimal.</p>
+      {!error && <p className="mt-4 text-slate-400 text-sm font-medium">Cadre ta rédaction dans le viseur pour un scan optimal.</p>}
 
       <canvas ref={canvasRef} className="hidden" />
 
