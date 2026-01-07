@@ -1,20 +1,10 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
+# Pluméo - Atelier de Rédaction Scolaire
 
-This contains everything you need to run your app locally.
+Application éducative utilisant l'IA (Gemini) pour accompagner les collégiens dans l'amélioration de leurs écrits.
 
-View your app in AI Studio: https://ai.studio/apps/drive/14L9WFz6SBCa2bzz5swlUmhN3Il5U161j
+## Déploiement sur Vercel
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Connectez votre dépôt GitHub.
+2. Définissez la variable d'environnement `API_KEY` avec votre clé Google AI Studio.
+3. Le projet est configuré pour un déploiement statique sans étape de build complexe.
