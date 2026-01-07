@@ -49,8 +49,7 @@ export const ConsignePanel: React.FC<ConsignePanelProps> = ({ onConsigneChange, 
       });
     } else {
       // Si on vide tout, on peut considérer qu'il n'y a plus de consigne active
-      // @ts-ignore - On autorise le null ici pour l'état de l'app si besoin, 
-      // mais on reste sur l'interface prévue.
+      // @ts-ignore
       onConsigneChange(null as any);
     }
   };
@@ -64,7 +63,7 @@ export const ConsignePanel: React.FC<ConsignePanelProps> = ({ onConsigneChange, 
           <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
             <BookOpen className="w-5 h-5 text-white" />
           </div>
-          <h2 className="font-bold font-display">Mon Sujet Pluméo</h2>
+          <h2 className="font-bold font-display">Mon Sujet Plumeo</h2>
         </div>
         <button 
           onClick={() => setShowGenerator(!showGenerator)}
@@ -142,7 +141,6 @@ export const ConsignePanel: React.FC<ConsignePanelProps> = ({ onConsigneChange, 
                   {activeConsigne.description}
                 </p>
                 <button 
-                  /* Fix: Use block statement to execute multiple void-returning functions. Logical OR on void is invalid in some TS configurations. */
                   onClick={() => { setManualText(''); onConsigneChange(null as any); }}
                   className="mt-2 text-[10px] font-bold text-indigo-500 hover:underline"
                 >

@@ -23,15 +23,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, isDarkMode, onToggleDa
       }`}>
         <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => onViewChange('editor')}>
-            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg transition-all group-hover:scale-110 group-hover:rotate-3 duration-300 bg-gradient-to-br ${
-              isDarkMode 
-                ? 'from-indigo-400 via-indigo-500 to-violet-500 shadow-indigo-900/40' 
-                : 'from-white via-indigo-50 to-blue-100 shadow-black/20'
-            }`}>
-              <Feather className={`w-6 h-6 drop-shadow-md ${isDarkMode ? 'text-white' : 'text-indigo-900'}`} />
-            </div>
-            <h1 className={`text-2xl font-black tracking-tighter font-display transition-colors text-white`}>
-              Pluméo
+            <h1 className={`text-2xl font-black tracking-tighter font-display transition-colors ${isDarkMode ? 'text-indigo-400' : 'text-indigo-300'}`}>
+              Plumeo
             </h1>
           </div>
           
@@ -88,7 +81,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, isDarkMode, onToggleDa
             <Feather className="w-4 h-4" />
           </div>
           <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-            Pluméo — Redonner ses lettres de noblesse à l'écriture.
+            Plumeo — Redonner ses lettres de noblesse à l'écriture.
           </p>
           <p className={`text-[10px] uppercase tracking-widest font-black ${isDarkMode ? 'text-slate-600' : 'text-slate-300'}`}>
             © 2024 • Atelier Littéraire Intelligent

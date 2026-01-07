@@ -34,7 +34,7 @@ const TIPS: Tip[] = [
   { text: "Mémorise l'orthographe des mots 'invariables' : toujours, déjà, bientôt, parfois, souvent.", category: 'grammar' },
   { text: "Pour savoir s'il faut écrire -é ou -er, remplace le verbe par 'vendre'. Si on peut dire 'vendu', c'est -é.", category: 'grammar' },
   { text: "Dans un récit au passé, utilise l'imparfait pour le décor et le passé simple pour les actions soudaines.", category: 'grammar' },
-  { text: "Donne de la personnalité à tes personnages par un détail unique : une cicatrice, un tic de langage, un chapeau...", category: 'style' },
+  { text: "Donne de la personnalité à tes personnages par un detail unique : une cicatrice, un tic de langage, un chapeau...", category: 'style' },
   { text: "Évite les clichés comme 'une peur bleue' ou 'un froid de canard'. Essaie d'inventer tes propres expressions.", category: 'style' },
   { text: "Les adverbes en '-ment' sont utiles, mais n'en abuse pas. Un bon verbe est souvent plus puissant.", category: 'vocabulary' },
   { text: "Soigne ta conclusion. Elle doit répondre aux attentes du lecteur ou ouvrir sur un nouvel horizon.", category: 'organization' },
@@ -154,7 +154,7 @@ const App: React.FC = () => {
       }, 100);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || "Oups, Pluméo a rencontré un petit problème. Réessaie !");
+      setErrorMsg(err.message || "Oups, Plumeo a rencontré un petit problème. Réessaie !");
       setState(prev => ({ ...prev, isAnalyzing: false }));
     }
   };
@@ -209,13 +209,13 @@ const App: React.FC = () => {
       label = "Perfectionnement en cours !";
     } else if (state.analysis) {
       percent = 85;
-      label = "Analyse Pluméo terminée !";
+      label = "Analyse Plumeo terminée !";
     } else if (state.isAnalyzing) {
       percent = 65;
       label = "Ta plume est à l'étude...";
     } else if (wordCount > 0) {
       percent = Math.min(Math.floor((wordCount / 150) * 50), 50);
-      label = wordCount < 150 ? "L'inspiration arrive..." : "Prêt pour le bilan Pluméo !";
+      label = wordCount < 150 ? "L'inspiration arrive..." : "Prêt pour le bilan Plumeo !";
     }
 
     return { percent, label };
@@ -305,7 +305,7 @@ const App: React.FC = () => {
                   <textarea 
                     value={state.text}
                     onChange={(e) => setState(prev => ({ ...prev, text: e.target.value }))}
-                    placeholder="Laisse couler ton inspiration sur cette page Pluméo..."
+                    placeholder="Laisse couler ton inspiration sur cette page Plumeo..."
                     className={`w-full min-h-[600px] p-10 md:pl-20 text-xl leading-relaxed outline-none resize-none font-serif placeholder:italic transition-colors bg-transparent relative z-10 ${
                       state.isDarkMode ? 'text-slate-200 placeholder:text-slate-600' : 'text-slate-800 placeholder:text-slate-300'
                     }`}
@@ -345,7 +345,7 @@ const App: React.FC = () => {
                       wordCount > 100 ? 'bg-indigo-500/20 text-indigo-500' : 
                       'bg-slate-500/20 text-slate-500'
                     }`}>
-                      {wordCount > 300 ? 'Maître Pluméo' : wordCount > 100 ? 'Écrivain' : 'Apprenti'}
+                      {wordCount > 300 ? 'Maître Plumeo' : wordCount > 100 ? 'Écrivain' : 'Apprenti'}
                     </span>
                   </div>
                 </div>
@@ -397,7 +397,7 @@ const App: React.FC = () => {
                     {state.isAnalyzing ? (
                       <>
                         <div className="w-6 h-6 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
-                        Analyse Pluméo...
+                        Analyse Plumeo...
                       </>
                     ) : (
                       <>
@@ -455,7 +455,7 @@ const App: React.FC = () => {
                   : 'bg-white border-slate-200 shadow-indigo-50/30'
               }`}>
                 <h3 className={`font-bold mb-6 flex items-center gap-2 font-display ${state.isDarkMode ? 'text-slate-200' : 'text-indigo-950'}`}>
-                  <Lightbulb className="w-5 h-5 text-amber-500" /> Guide Pluméo
+                  <Lightbulb className="w-5 h-5 text-amber-500" /> Guide Plumeo
                 </h3>
                 <div className="space-y-6">
                   <MethodItem number="1" title="Sujet" desc="Prépare ton voyage littéraire." isDarkMode={state.isDarkMode} />
