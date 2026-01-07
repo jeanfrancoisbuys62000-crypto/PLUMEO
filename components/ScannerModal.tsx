@@ -36,6 +36,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
       }
     } catch (err: any) {
       console.error("Erreur caméra:", err);
+      // Gestion spécifique du cas où l'utilisateur ignore ou ferme la demande de permission
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError' || err.message?.includes('Permission dismissed')) {
         setError("L'accès à la caméra a été refusé. Pour scanner ta rédaction, Pluméo a besoin de cette autorisation dans les réglages de ton navigateur.");
       } else {
@@ -74,7 +75,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
       onScanComplete(extractedText);
     } catch (err) {
       console.error(err);
-      alert("Erreur lors de l'extraction du texte.");
+      alert("Erreur lors de l'extraction du texte. Vérifie ta connexion internet.");
     } finally {
       setIsProcessing(false);
     }
@@ -83,6 +84,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
   const resetCapture = () => {
     setCapturedImage(null);
     setError(null);
+    startCamera();
   };
 
   return (
@@ -91,6 +93,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-2 bg-black/40 rounded-full text-white hover:bg-black/60 transition-colors"
+          aria-label="Fermer le scanner"
         >
           <X className="w-6 h-6" />
         </button>
@@ -116,11 +119,12 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
             <video 
               ref={videoRef} 
               autoPlay 
+              muted
               playsInline 
               className="w-full h-full object-contain"
             />
           ) : (
-            <img src={capturedImage} className="w-full h-full object-contain" />
+            <img src={capturedImage} alt="Capture de la rédaction" className="w-full h-full object-contain" />
           )}
 
           {isProcessing && (
@@ -146,6 +150,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ onScanComplete, onCl
             <button 
               onClick={captureFrame}
               className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"
+              title="Prendre la photo"
             >
               <div className="w-12 h-12 border-4 border-slate-950 rounded-full"></div>
             </button>

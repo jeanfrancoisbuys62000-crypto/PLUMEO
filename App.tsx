@@ -10,7 +10,7 @@ import { ScannerModal } from './components/ScannerModal';
 import { InspirationView } from './components/InspirationView';
 import { AppState, Consigne, AppView } from './types';
 import { analyzeRedaction } from './services/geminiService';
-import { FileText, Trash2, Edit3, Camera, FileUp, Sparkles, Wand2, Lightbulb, CheckCircle2, Feather, AlertTriangle } from 'lucide-react';
+import { FileText, Trash2, Edit3, Camera, FileUp, Sparkles, Wand2, Lightbulb, CheckCircle2, Feather, AlertTriangle, Clock, Type, BarChart3 } from 'lucide-react';
 
 type TipCategory = 'vocabulary' | 'grammar' | 'organization' | 'style' | 'general';
 
@@ -196,10 +196,13 @@ const App: React.FC = () => {
     setShowScanner(false);
   };
 
+  const wordCount = useMemo(() => state.text.trim() ? state.text.trim().split(/\s+/).length : 0, [state.text]);
+  const charCount = useMemo(() => state.text.length, [state.text]);
+  const readingTime = useMemo(() => Math.ceil(wordCount / 200), [wordCount]);
+
   const progressData = useMemo(() => {
     let percent = 0;
     let label = "Commence à écrire...";
-    const wordCount = state.text.trim() ? state.text.trim().split(/\s+/).length : 0;
     
     if (state.correctionMode) {
       percent = 100;
@@ -216,7 +219,7 @@ const App: React.FC = () => {
     }
 
     return { percent, label };
-  }, [state.text, state.analysis, state.isAnalyzing, state.correctionMode]);
+  }, [state.text, state.analysis, state.isAnalyzing, state.correctionMode, wordCount]);
 
   return (
     <Layout 
@@ -271,7 +274,7 @@ const App: React.FC = () => {
                 isDarkMode={state.isDarkMode}
               />
 
-              <div className={`rounded-3xl shadow-2xl border overflow-hidden ring-1 transition-all ${
+              <div className={`rounded-3xl shadow-2xl border overflow-hidden ring-1 transition-all relative ${
                 state.isDarkMode 
                   ? 'bg-slate-900 border-slate-800 ring-slate-800 shadow-black' 
                   : 'bg-white border-slate-200 ring-slate-100 shadow-indigo-100/30'
@@ -303,7 +306,7 @@ const App: React.FC = () => {
                     value={state.text}
                     onChange={(e) => setState(prev => ({ ...prev, text: e.target.value }))}
                     placeholder="Laisse couler ton inspiration sur cette page Pluméo..."
-                    className={`w-full min-h-[650px] p-10 md:pl-20 text-xl leading-relaxed outline-none resize-none font-serif placeholder:italic transition-colors bg-transparent relative z-10 ${
+                    className={`w-full min-h-[600px] p-10 md:pl-20 text-xl leading-relaxed outline-none resize-none font-serif placeholder:italic transition-colors bg-transparent relative z-10 ${
                       state.isDarkMode ? 'text-slate-200 placeholder:text-slate-600' : 'text-slate-800 placeholder:text-slate-300'
                     }`}
                   />
@@ -315,6 +318,36 @@ const App: React.FC = () => {
                       <p className={`${state.isDarkMode ? 'text-slate-500' : 'text-indigo-200'} font-bold text-lg text-center`}>Ta plume n'attend que toi.</p>
                     </div>
                   )}
+                </div>
+
+                {/* Dashboard / Status Bar */}
+                <div className={`p-4 border-t flex flex-wrap items-center justify-between gap-4 px-10 transition-colors ${
+                  state.isDarkMode ? 'bg-slate-950/80 border-slate-800 text-slate-400' : 'bg-slate-50/80 border-slate-100 text-slate-500'
+                }`}>
+                  <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4 text-indigo-500" />
+                      <span className="text-xs font-bold"><strong className={state.isDarkMode ? 'text-slate-200' : 'text-slate-700'}>{wordCount}</strong> mots</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Type className="w-4 h-4 text-emerald-500" />
+                      <span className="text-xs font-bold"><strong className={state.isDarkMode ? 'text-slate-200' : 'text-slate-700'}>{charCount}</strong> signes</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-amber-500" />
+                      <span className="text-xs font-bold">~<strong className={state.isDarkMode ? 'text-slate-200' : 'text-slate-700'}>{readingTime}</strong> min lecture</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-tighter opacity-50">Rang :</span>
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
+                      wordCount > 300 ? 'bg-amber-500/20 text-amber-500' : 
+                      wordCount > 100 ? 'bg-indigo-500/20 text-indigo-500' : 
+                      'bg-slate-500/20 text-slate-500'
+                    }`}>
+                      {wordCount > 300 ? 'Maître Pluméo' : wordCount > 100 ? 'Écrivain' : 'Apprenti'}
+                    </span>
+                  </div>
                 </div>
 
                 {errorMsg && (
