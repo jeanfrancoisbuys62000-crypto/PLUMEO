@@ -1,0 +1,7 @@
+{
+  "name": "Pluméo",
+  "description": "Ton compagnon littéraire intelligent pour sublimer tes rédactions et libérer ta plume.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
