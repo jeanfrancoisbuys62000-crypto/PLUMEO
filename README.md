@@ -1,5 +1,5 @@
 
-# Pluméo - Atelier de Rédaction Scolaire
+# LaboStyle - Atelier de Rédaction Scolaire
 
 Application éducative utilisant l'IA (Gemini) pour accompagner les collégiens dans l'amélioration de leurs écrits.
 
