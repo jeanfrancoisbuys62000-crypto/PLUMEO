@@ -2,21 +2,27 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Consigne, GradeLevel, AnalysisResult } from "../types";
 
-// Fonction utilitaire pour gérer les erreurs d'API communes
+// Fonction pour obtenir l'instance de l'IA avec la clé la plus récente
+const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+
 const handleApiError = (err: any) => {
   console.error("API Error:", err);
   if (err.message?.includes("429") || err.status === 429) {
-    throw new Error("LaboStyle est très sollicité en ce moment (limite de requêtes atteinte). Patiente 10 petites secondes et réessaie !");
+    throw new Error("LaboStyle est très sollicité. Patiente 10 secondes et réessaie !");
   }
-  if (err.message?.includes("500") || err.status === 500) {
-    throw new Error("Le cerveau de LaboStyle fatigue un peu (erreur serveur). Réessaie dans un instant.");
+  if (err.message?.includes("Requested entity was not found")) {
+    // Cas spécifique où la clé API est invalide ou expirée dans l'environnement
+    if (window.aistudio) {
+       window.aistudio.openSelectKey();
+    }
+    throw new Error("Ta clé d'accès a expiré. Merci de cliquer à nouveau sur 'Activer mon accès'.");
   }
   throw err;
 };
 
 export const generateConsigne = async (grade: GradeLevel, theme: string): Promise<Consigne> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Génère un sujet de rédaction scolaire pour un élève de ${grade} sur le thème "${theme}".
@@ -44,7 +50,7 @@ export const generateConsigne = async (grade: GradeLevel, theme: string): Promis
 
 export const getInspirationContent = async (theme: string): Promise<{ text: string, tips: string[] }> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Tu es un grand auteur classique. Écris un court texte d'inspiration (environ 150 mots) de type "${theme}" pour un collégien. 
@@ -71,19 +77,19 @@ export const getInspirationContent = async (theme: string): Promise<{ text: stri
 
 export const getLexicalInfo = async (word: string, type: 'definition' | 'synonymes'): Promise<string> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAI();
     const prompt = type === 'definition' 
-      ? `Donne une définition courte, précise et adaptée à un collégien pour le mot : "${word}". Si le mot a plusieurs sens importants, liste les deux principaux.`
-      : `Donne une liste riche de synonymes et d'expressions équivalentes pour le mot : "${word}". Organise-les par nuance ou niveau de langue si possible.`;
+      ? `Donne une définition courte, précise et adaptée à un collégien pour le mot : "${word}".`
+      : `Donne une liste riche de synonymes et d'expressions équivalentes pour le mot : "${word}".`;
     
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
-          systemInstruction: "Tu es un dictionnaire pédagogique pour collégiens. Tes réponses sont concises, claires et utilisent un ton encourageant. Tu t'appelles LaboStyle."
+          systemInstruction: "Tu es LaboStyle, un dictionnaire pédagogique pour collégiens. Tes réponses sont concises et claires."
       }
     });
-    return response.text || "Désolé, je n'ai pas trouvé d'informations pour ce mot.";
+    return response.text || "Désolé, je n'ai pas trouvé d'informations.";
   } catch (err) {
     throw handleApiError(err);
   }
@@ -91,17 +97,14 @@ export const getLexicalInfo = async (word: string, type: 'definition' | 'synonym
 
 export const extractTextFromImage = async (base64Data: string, mimeType: string): Promise<string> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: {
         parts: [
           { inlineData: { data: base64Data, mimeType } },
-          { text: "Tu es un expert en lecture de manuscrits scolaires. Extrais tout le texte présent dans cette image de rédaction. Renvoie UNIQUEMENT le texte brut extrait, sans aucun commentaire additionnel, sans titre ajouté, et sans mise en forme spéciale." }
+          { text: "Extrais le texte brut de cette rédaction manuscrite." }
         ]
-      },
-      config: {
-        temperature: 0.1,
       }
     });
     return response.text || "";
@@ -112,38 +115,19 @@ export const extractTextFromImage = async (base64Data: string, mimeType: string)
 
 export const analyzeRedaction = async (text: string, consigne: Consigne | null): Promise<AnalysisResult> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAI();
     const systemInstruction = `
-      Tu es un coach pédagogique bienveillant pour collégiens français (6ème à 3ème). Tu t'appelles LaboStyle.
-      Ton rôle est d'analyser une rédaction et de fournir des retours constructifs SANS donner la correction directe.
+      Tu es LaboStyle, un coach pédagogique pour collégiens (DNB). 
+      Analyse la rédaction et fournis des retours constructifs SANS donner la correction directe.
+      Note sur 40.
       
-      Critères d'analyse:
-      1. Respect du sujet et des consignes.
-      2. Organisation (paragraphes, connecteurs).
-      3. Qualité de la langue (grammaire, orthographe, syntaxe).
-      4. Vocabulaire (richesse, précision).
-
-      IMPORTANT: La note finale doit être sur 40, comme à l'épreuve de français du Diplôme National du Brevet (DNB).
-
-      IMPORTANT: Pour le champ "annotatedText", renvoie le texte original complet mais entoure CHAQUE erreur identifiée par une balise spéciale:
-      <error type="grammar|lexical" hint="indice court" guidance="question pour faire réfléchir">le texte erroné</error>.
-      Ne corrige PAS le texte dans le retour "annotatedText", garde les erreurs telles quelles à l'intérieur des balises.
-    `;
-
-    const prompt = `
-      Analyse cette rédaction d'un élève de ${consigne?.gradeLevel || "Collège"}.
-      Sujet: ${consigne?.title || "Libre"}
-      Description du sujet: ${consigne?.description || "Aucune"}
-      
-      Texte de l'élève:
-      "${text}"
-
-      Réponds en JSON structuré. Note sur 40.
+      IMPORTANT pour "annotatedText": entoure CHAQUE erreur par :
+      <error type="grammar|lexical" hint="indice" guidance="question">texte erroné</error>.
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
+      model: 'gemini-3-pro-preview', // Utilisation de Pro pour l'analyse complexe
+      contents: `Analyse cette rédaction. Sujet: ${consigne?.title || "Libre"}. Texte: "${text}"`,
       config: {
         systemInstruction,
         responseMimeType: "application/json",
